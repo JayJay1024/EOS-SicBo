@@ -1,0 +1,48 @@
+body {
+    width: 100%;
+}
+
+.layout {
+    width: 100%;
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+.login-logout {
+    float: left;
+    width: 140px;
+}
+
+.player-asset, .referrer {
+    float: left;
+    width: 200px;
+    color: #1DA57A;
+}
+
+.info {
+    float: right;
+    width: 80px;
+}
+
+.sicbo-result {
+    color: green;
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: bolder;
+    font-size: 3em;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.dice-result {
+    color: blue;
+    font-weight: bolder;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.input-memo {
+    width: 720px;
+    margin: auto;
+    margin-bottom: 20px;
+}
