@@ -110,7 +110,7 @@ class SicBoRecords extends Component {
                     columns={columns}
                     dataSource={this.state.data_reveals}
                     pagination={false}
-                    style={{ minHeight: "480px", width: "1080px", margin: "auto", backgroundColor: "#efefef" }}
+                    style={{ maxHeight: "720px", width: "1080px", margin: "auto", backgroundColor: "#efefef" }}
                 />
             </div>
         );
