@@ -25,7 +25,7 @@ class SicBoRecords extends Component {
 
     fetchRecord = () => {
         this.eosjs.getActions(contract_account, -1, -90).then(({ actions }) => {
-            let limit = 20;
+            let limit = 20;  // 从90个actions里面筛选出20个我们想要的
             const _data_reveals = [];
             for ( let i = actions.length - 1; i >= 0 && limit > 0; i-- ) {
                 if ( actions[i].action_trace

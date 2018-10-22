@@ -77,6 +77,7 @@ class SicBo extends Component {
         }
 
         if ( this.state.is_login && this.scatter && this.scatter.identity ) {
+            // 进入这里是logout动作
             this.scatter.forgetIdentity().then(() => {
                 this.setState({ is_login: false });
                 this.setState({ player_account: 'Login' });
@@ -89,6 +90,7 @@ class SicBo extends Component {
                 });
             });
         } else if ( !this.state.is_login && this.scatter && !this.scatter.identity ) {
+            // 进入这里是login动作
             this.scatter.getIdentity({ accounts: [network] }).then(() => {
                 const account = this.scatter.identity.accounts.find(account => account.blockchain === 'eos');
                 this.setState({ player_account: account.name });
@@ -108,7 +110,7 @@ class SicBo extends Component {
         this.eosjs.getTableRows({
             json: true,
             code: 'eosio.token',
-            scope: this.state.player_account,
+            scope: this.state.player_account,  // 需要获取资产的账号
             table: 'accounts'
         }).then(eosBalance => {
             if ( this.state.is_login && eosBalance.rows[0] ) {  // check if is valid now
@@ -152,8 +154,15 @@ class SicBo extends Component {
 
             // 只有登录了才转账
             if ( this.state.is_login && 'Login' !== this.state.player_account ) {
+
+                // 组装uuid
                 let uuid4 = UUID.create().toString();
                 value = value + ';u:' + uuid4;
+
+                // 组装推荐人
+                if ( "Null" != this.state.referrer ) {
+                    value = value + ';r:' + this.state.referrer;
+                }
 
                 const eos = this.scatter.eos(network, Eos, {});
                 eos.transfer({
@@ -163,7 +172,9 @@ class SicBo extends Component {
                     memo: value
                 }).then(res => {
                     Message.success('SicBo Bet Success');
-                    this.getSicBoResult( uuid4 );
+                    this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
+
+                    // 结果出来之前，先让骰子转动起来
                     this.dice_shaking = setInterval(() => {
                         this.setState({
                             dice_result: {
@@ -200,8 +211,9 @@ class SicBo extends Component {
                     && actions[index].action_trace.act.data.res
                     && actions[index].action_trace.act.data.res.uid === uuid4
                     && actions[index].action_trace.act.data.res.player === this.state.player_account ) {
+                    // 进入这里，表名匹配到对应uuid的下注结果
                     
-                    clearInterval( this.dice_shaking );
+                    clearInterval( this.dice_shaking );  // 停止骰子转动
 
                     const result = actions[index].action_trace.act.data.res;
                     this.setState({
@@ -211,6 +223,12 @@ class SicBo extends Component {
                             dice3: result.dice.dice3,
                         }
                     });
+
+                    // 如果检测到payed不等于真，给一个玩家提示，该提示需要提供uuid
+                    if ( !actions[index].action_trace.act.data.res.payed ) {
+                        alert("sorry, we will payout to u later, remember uid: " + uuid4);
+                    }
+
                     break;
                 }
             }
