@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Eos from 'eosjs';
+import UUID from 'uuid-js';
 import { Layout, Icon, Message, Input, InputNumber } from 'antd';
 import SicBoInfoDrawer from './SicBoInfoDrawer';
 import SicBoRecords from './SicBoRecords';
@@ -151,6 +152,9 @@ class SicBo extends Component {
 
             // 只有登录了才转账
             if ( this.state.is_login && 'Login' !== this.state.player_account ) {
+                let uuid4 = UUID.create().toString();
+                value = value + ';u:' + uuid4;
+
                 const eos = this.scatter.eos(network, Eos, {});
                 eos.transfer({
                     from: this.state.player_account,
@@ -159,7 +163,7 @@ class SicBo extends Component {
                     memo: value
                 }).then(res => {
                     Message.success('SicBo Bet Success');
-                    this.getSicBoResult();
+                    this.getSicBoResult( uuid4 );
                     this.dice_shaking = setInterval(() => {
                         this.setState({
                             dice_result: {
@@ -176,7 +180,7 @@ class SicBo extends Component {
         }
     }
 
-    getSicBoResult = ( action_seq = Math.pow(2, 52) ) => {
+    getSicBoResult = ( uuid4, action_seq = Math.pow(2, 52) ) => {
         this.eosjs.getActions(this.state.player_account, -1, -20).then(({ actions }) => {
             let cur_action_seq = action_seq;
             let index = actions.length - 1;
@@ -184,7 +188,7 @@ class SicBo extends Component {
             for (; index >= 0; index--) {
                 let cur_action_seq = actions[index].account_action_seq;
                 if ( cur_action_seq <= action_seq ) {
-                    this.getSicBoResult( cur_action_seq );
+                    this.getSicBoResult( uuid4, cur_action_seq );
                     break;
                 }
 
@@ -194,6 +198,7 @@ class SicBo extends Component {
                     && actions[index].action_trace.act.name === 'result'
                     && actions[index].action_trace.act.data
                     && actions[index].action_trace.act.data.res
+                    && actions[index].action_trace.act.data.res.uid === uuid4
                     && actions[index].action_trace.act.data.res.player === this.state.player_account ) {
                     
                     clearInterval( this.dice_shaking );
@@ -211,7 +216,7 @@ class SicBo extends Component {
             }
 
             if ( index < 0 ) {
-                this.getSicBoResult( cur_action_seq );
+                this.getSicBoResult( uuid4, cur_action_seq );
             }
         });
     }

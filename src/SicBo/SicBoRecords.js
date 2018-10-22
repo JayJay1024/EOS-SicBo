@@ -52,6 +52,9 @@ class SicBoRecords extends Component {
             }
             this.setState({ data_reveals: _data_reveals });
             setTimeout(this.fetchRecord, 2000);
+        }).catch(err => {
+            console.error( err );
+            this.fetchRecord();
         });
     }
 
