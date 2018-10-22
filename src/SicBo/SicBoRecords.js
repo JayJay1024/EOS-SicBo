@@ -42,7 +42,7 @@ class SicBoRecords extends Component {
                         player: actions[i].action_trace.act.data.res.player,
                         payin: actions[i].action_trace.act.data.res.payin,
                         payout: actions[i].action_trace.act.data.res.payout,
-                        payed: actions[i].action_trace.act.data.res.should_todopay ? 'false' : 'true',
+                        payed: actions[i].action_trace.act.data.res.payed ? 'true' : 'false',
                         dices: actions[i].action_trace.act.data.res.dice.dice1 + '、' + actions[i].action_trace.act.data.res.dice.dice2 + '、' + actions[i].action_trace.act.data.res.dice.dice3,
                         detail: actions[i].action_trace.act.data.res.detail,
                     });
