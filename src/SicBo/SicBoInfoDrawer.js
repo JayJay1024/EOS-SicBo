@@ -134,7 +134,7 @@ class SicBoInfoDrawer extends Component {
             <div>
                 <Drawer
                     // title = "SicBo Info"
-                    width = "40%"
+                    width = "50%"
                     closable = {false}
                     onClose = {this.props.handleCloseInfo}
                     visible = {this.props.info_visible}
@@ -147,14 +147,19 @@ class SicBoInfoDrawer extends Component {
                         style={{ backgroundColor: "#efefef" }}
                     />
                     <Divider>二、 memo格式</Divider>
-                    <p>r:推荐人账号;押注标识:押注金额</p>
+                    <p>r:推荐人账号;u:uuid;押注标识:押注金额</p>
                     <p>("推荐人账号"和"押注标识"之间的是英文分号，"押注标识"和"押注金额"之间的是英文冒号)</p>
-                    <p></p>
-                    <p>例子1、押大，金额为2.5000 EOS，推荐人账号是aaaabbbb2222：</p>
-                    <p>r:aaaabbbb2222;2:250000</p>
-                    <p></p>
-                    <p>例子2、押0.6000 EOS全围，以及押2.0000 EOS 双，无推荐人：</p>
-                    <p>123456:6000;1:20000</p>
+                    <p>----------------------------------------------------------------------------------------------</p>
+                    <p>例子1、押大，金额为2.5000 EOS，推荐人账号是aaaabbbb2222，uuid为3315f8ee-c212-41b0-9e8e-ce3ca00f024e：</p>
+                    <p>r:aaaabbbb2222;u:3315f8ee-c212-41b0-9e8e-ce3ca00f024e;2:250000</p>
+                    <p>----------------------------------------------------------------------------------------------</p>
+                    <p>例子2、押0.6000 EOS全围，以及押2.0000 EOS 双，无推荐人，uuid为3315f8ee-c212-41b0-9e8e-ce3ca00f024e：</p>
+                    <p>u:3315f8ee-c212-41b0-9e8e-ce3ca00f024e;123456:6000;1:20000</p>
+                    <p>----------------------------------------------------------------------------------------------</p>
+                    <p>注：</p>
+                    <p>a. uuid是必须的，长度为36的字符串，可以通过使用"uuid-js"库</p>
+                    <p>b. uuid-js: https://www.npmjs.com/package/uuid-js</p>
+                    <p>c. 如果前端使用的uuid不是长度为36的字符串，请告知，我们需要同步修改合约</p>
                 </Drawer>
             </div>
         );
