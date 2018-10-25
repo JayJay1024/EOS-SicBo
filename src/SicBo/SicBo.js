@@ -185,7 +185,9 @@ class SicBo extends Component {
                         });
                     }, 150);
                 }).catch(e => {
-                    Message.error(JSON.parse(e).error.details[0].message);
+                    console.error( e );
+                    Message.error("SicBo Bet Fail");
+                    // Message.error(JSON.parse(e).error.details[0].message);
                 });
             }
         }
