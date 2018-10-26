@@ -160,6 +160,13 @@ class SicBoInfoDrawer extends Component {
                     <p>a. uuid是必须的，长度为36的字符串，可以通过使用"uuid-js"库</p>
                     <p>b. uuid-js: https://www.npmjs.com/package/uuid-js</p>
                     <p>c. 如果前端使用的uuid不是长度为36的字符串，请告知，我们需要同步修改合约</p>
+                    <Divider>三、 结果</Divider>
+                    <p>player: 玩家</p>
+                    <p>payin: 投注总金额</p>
+                    <p>payout: 中奖总金额</p>
+                    <p>payed: 奖金是否已经支付</p>
+                    <p>dice: 骰子点数</p>
+                    <p>detail: 格式为 "投注类型:该类型投注金额:该类型中奖金额"</p>
                 </Drawer>
             </div>
         );
