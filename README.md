@@ -4,6 +4,8 @@
 
 ### Demo
 ```
+$ git clone https://github.com/LucienLau/EOS-SicBo.git
+$ cd EOS-SicBo
 $ yarn install
 $ yarn start
 ```
