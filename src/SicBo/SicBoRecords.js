@@ -2,12 +2,22 @@ import React, { Component } from 'react';
 import { Table } from 'antd';
 import Eos from 'eosjs';
 
+// jungle net
+// const network = {
+//     blockchain: 'eos',
+//     protocol: 'http',
+//     host: 'junglehistory.cryptolions.io',  // filter-on = *
+//     port: 18888,
+//     chainId: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca'  // jungle net
+// }
+
+// kylin net
 const network = {
     blockchain: 'eos',
-    protocol: 'http',
-    host: 'junglehistory.cryptolions.io',  // filter-on = *
-    port: 18888,
-    chainId: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca'  // jungle net
+    protocol: 'https',
+    host: 'api-kylin.eoslaomao.com',  // filter-on = *
+    port: '',
+    chainId: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'  // kylin net
 }
 const contract_account = 'dicecontract';
 
@@ -51,10 +61,10 @@ class SicBoRecords extends Component {
                 }
             }
             this.setState({ data_reveals: _data_reveals });
-            setTimeout(this.fetchRecord, 2000);
+            setTimeout(this.fetchRecord, 1000);
         }).catch(err => {
             console.error( err );
-            this.fetchRecord();
+            setTimeout(this.fetchRecord, 2000);
         });
     }
 

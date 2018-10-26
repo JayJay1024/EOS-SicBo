@@ -9,12 +9,22 @@ import './SicBo.css';
 const { Header, Content } = Layout;
 const Search = Input.Search;
 
+// jungle net
+// const network = {
+//     blockchain: 'eos',
+//     protocol: 'http',
+//     host: 'junglehistory.cryptolions.io',  // filter-on = *
+//     port: 18888,
+//     chainId: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca'  // jungle net
+// }
+
+// kylin net
 const network = {
     blockchain: 'eos',
-    protocol: 'http',
-    host: 'junglehistory.cryptolions.io',  // filter-on = *
-    port: 18888,
-    chainId: '038f4b0fc8ff18a4f0842a8f0564611f6e96e8535901dd45e43ac8691a1c4dca'  // jungle net
+    protocol: 'https',
+    host: 'api-kylin.eoslaomao.com',  // filter-on = *
+    port: '',
+    chainId: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'  // kylin net
 }
 const contract_account = 'dicecontract';  // 合约账号
 
@@ -160,7 +170,7 @@ class SicBo extends Component {
                 value = value + ';u:' + uuid4;
 
                 // 组装推荐人
-                if ( "Null" != this.state.referrer ) {
+                if ( "Null" !== this.state.referrer ) {
                     value = value + ';r:' + this.state.referrer;
                 }
 
