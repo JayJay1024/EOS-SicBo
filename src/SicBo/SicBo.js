@@ -181,6 +181,7 @@ class SicBo extends Component {
                     quantity: Number(this.bet_quantity).toFixed(4) + ' EOS',
                     memo: value
                 }).then(res => {
+                    this.getPlayerAsset();  // 更新玩家余额
                     Message.success('SicBo Bet Success');
                     this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
 
@@ -239,6 +240,10 @@ class SicBo extends Component {
                     // 如果检测到payed不等于真，给一个玩家提示，该提示需要提供uuid
                     if ( !actions[index].action_trace.act.data.res.payed ) {
                         alert("sorry, we will payout to u later, remember uid: " + uuid4);
+                    }
+
+                    if ( actions[index].action_trace.act.data.res.payout != '0.0000 EOS' ) {
+                        this.getPlayerAsset();  // 更新玩家余额
                     }
 
                     break;
