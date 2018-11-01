@@ -296,12 +296,13 @@ class SicBo extends Component {
                         </div>
                         <div className="input-memo">
                             <InputNumber
-                                placeholder="quantity"
+                                placeholder="total quantity"
                                 step={0.5}
+                                style={{ width: '120px' }}
                                 onChange={this.inputQuantityChange.bind(this)}
                             />
                             <Search
-                                placeholder="r:referrer;key:quantity"
+                                placeholder="key:quantity"
                                 onSearch={this.inputMemoChange.bind(this)}
                                 enterButton="Let's Go"
                             />
