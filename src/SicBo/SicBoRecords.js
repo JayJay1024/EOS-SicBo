@@ -21,6 +21,22 @@ const network = {
 }
 const contract_account = 'dicecontract';
 
+Date.prototype.Format = function (fmt) { //author: meizz
+    var o = {
+        "M+": this.getMonth() + 1, //月份
+        "d+": this.getDate(), //日
+        "h+": this.getHours(), //小时
+        "m+": this.getMinutes(), //分
+        "s+": this.getSeconds(), //秒
+        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+        "S": this.getMilliseconds() //毫秒
+    };
+    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (var k in o)
+        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    return fmt;
+}
+
 class SicBoRecords extends Component {
     constructor(props) {
         super(props);
@@ -50,6 +66,7 @@ class SicBoRecords extends Component {
                     _data_reveals.push({
                         key: i,
                         player: actions[i].action_trace.act.data.res.player,
+                        time: new Date(actions[i].action_trace.act.data.res.txtime*1000).Format('MM-dd hh:mm:ss'),
                         payin: actions[i].action_trace.act.data.res.payin,
                         payout: actions[i].action_trace.act.data.res.payout,
                         payed: actions[i].action_trace.act.data.res.payed ? 'true' : 'false',
@@ -83,7 +100,13 @@ class SicBoRecords extends Component {
             dataIndex: 'player',
             title: 'Player',
             align: 'center',
-            width: '20%',
+            width: '15%',
+        }, {
+            key: 'time',
+            dataIndex: 'time',
+            title: 'Time',
+            align: 'center',
+            width: '15',
         }, {
             key: 'payin',
             dataIndex: 'payin',
@@ -107,13 +130,13 @@ class SicBoRecords extends Component {
             dataIndex: 'dices',
             title: 'Dices',
             align: 'center',
-            width: '15%',
+            width: '10%',
         }, {
             key: 'detail',
             dataIndex: 'detail',
             title: 'Detail',
             align: 'center',
-            width: '25%',
+            width: '20%',
         }];
 
         return (
@@ -123,7 +146,7 @@ class SicBoRecords extends Component {
                     columns={columns}
                     dataSource={this.state.data_reveals}
                     pagination={false}
-                    style={{ maxHeight: "720px", width: "1080px", margin: "auto", backgroundColor: "#efefef" }}
+                    style={{ width: "1080px", margin: "auto", backgroundColor: "#efefef" }}
                 />
             </div>
         );
