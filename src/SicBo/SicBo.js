@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import Eos from 'eosjs';
 import UUID from 'uuid-js';
-import { Layout, Icon, Message, Input, InputNumber } from 'antd';
+import { Layout, Icon, Message, Input, InputNumber, Button } from 'antd';
 import SicBoInfoDrawer from './SicBoInfoDrawer';
 import SicBoRecords from './SicBoRecords';
 import './SicBo.css';
 
 const { Header, Content } = Layout;
-const Search = Input.Search;
 
 // jungle net
 // const network = {
@@ -46,6 +45,7 @@ class SicBo extends Component {
             player_account: 'Login',    // 保存玩家账号，未登录时显示'Login'
             referrer: "Null",           // 推荐人
             info_visible: false,
+            memo: '',
         }
 
         // var
@@ -59,12 +59,16 @@ class SicBo extends Component {
         this.getReferrer = this.getReferrer.bind(this);
         this.getPlayerAsset = this.getPlayerAsset.bind(this);
         this.getSicBoResult = this.getSicBoResult.bind(this);
+
+        this.start = this.start.bind(this);
+        this.eosStart = this.eosStart.bind(this);
+        this.tbtStart = this.tbtStart.bind(this);
     }
 
     init = () => {
         this.eosjs = Eos({
             httpEndpoint: `${network.protocol}://${network.host}:${network.port}`,
-            chainId: network.chainId
+            chainId: network.chainId,
         });
 
         document.addEventListener('scatterLoaded', scatterExtension => {
@@ -167,14 +171,25 @@ class SicBo extends Component {
     }
 
     // memo输入框
-    inputMemoChange = (value, event) => {
-        event.preventDefault();
+    inputMemoChange = (e) => {
+        e.preventDefault();
+        this.setState({ memo: e.target.value });
+    }
 
+    eosStart = (e) => {
+        console.log('eosStart');
+        this.start( this.state.memo, 'EOS' );
+    }
+
+    tbtStart = (e) => {
+        console.log('tbtStart');
+        this.start( this.state.memo, 'TBT' );
+    }
+
+    start = (value, symbol) => {
         if ( value.length <= 0 ) {
             console.log("null");
         } else {
-            console.log( value );
-
             // 只有登录了才转账
             if ( this.state.is_login && 'Login' !== this.state.player_account ) {
 
@@ -187,31 +202,40 @@ class SicBo extends Component {
                     value = value + ';r:' + this.state.referrer;
                 }
 
-                const eos = this.scatter.eos(network, Eos, {});
-                eos.transfer({
-                    from: this.state.player_account,
-                    to: contract_account,
-                    quantity: Number(this.bet_quantity).toFixed(4) + ' EOS',
-                    memo: value
-                }).then(res => {
-                    this.getPlayerAsset();  // 更新玩家余额
-                    Message.success('SicBo Bet Success');
-                    this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
+                let token_contract = 'eosio.token';
+                if ( symbol === 'TBT' ) {
+                    token_contract = 'trustbetteam';
+                }
 
-                    // 结果出来之前，先让骰子转动起来
-                    this.dice_shaking = setInterval(() => {
-                        this.setState({
-                            dice_result: {
-                                dice1: Math.floor(Math.random() * 5 + 1),
-                                dice2: Math.floor(Math.random() * 5 + 1),
-                                dice3: Math.floor(Math.random() * 5 + 1),
-                            }
-                        });
-                    }, 150);
+                const eos = this.scatter.eos(network, Eos, {});
+                eos.contract(token_contract).then(contract => {
+                    contract.transfer({
+                        from: this.state.player_account,
+                        to: contract_account,
+                        quantity: Number(this.bet_quantity).toFixed(4) + ' ' + symbol,
+                        memo: value,
+                    }).then(res => {
+                        this.getPlayerAsset();  // 更新玩家余额
+                        Message.success('SicBo Bet Success');
+                        this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
+
+                        // 结果出来之前，先让骰子转动起来
+                        this.dice_shaking = setInterval(() => {
+                            this.setState({
+                                dice_result: {
+                                    dice1: Math.floor(Math.random() * 5 + 1),
+                                    dice2: Math.floor(Math.random() * 5 + 1),
+                                    dice3: Math.floor(Math.random() * 5 + 1),
+                                }
+                            });
+                        }, 150);
+                    }).catch(e => {
+                        console.error( e );
+                        Message.error("SicBo Bet Fail");
+                        // Message.error(JSON.parse(e).error.details[0].message);
+                    });
                 }).catch(e => {
-                    console.error( e );
-                    Message.error("SicBo Bet Fail");
-                    // Message.error(JSON.parse(e).error.details[0].message);
+                    console.error(e);
                 });
             }
         }
@@ -309,18 +333,25 @@ class SicBo extends Component {
                             <span> 、 {this.state.dice_result.dice3}</span>
                         </div>
                         <div className="input-memo">
+                            <span style={{ fontSize: "0.5em" }}> 注: 第一个框输入memo，第二个框输入总金额，然后选择EOS或TBT下注</span>
+                            <Input
+                                placeholder="key:quantity"
+                                value={this.state.memo}
+                                onChange={this.inputMemoChange.bind(this)}
+                                style={{ marginBottom: '5px' }}
+                            />
                             <InputNumber
                                 placeholder="total quantity"
                                 step={0.5}
-                                style={{ width: '120px' }}
+                                style={{ width: '18%', marginRight: '2%' }}
                                 onChange={this.inputQuantityChange.bind(this)}
                             />
-                            <Search
-                                placeholder="key:quantity"
-                                onSearch={this.inputMemoChange.bind(this)}
-                                enterButton="Let's Go"
-                            />
-                            <span style={{ fontSize: "0.5em" }}> 注: 第一个框输入总金额，第二个框输入memo</span>
+                            <Button onClick={this.eosStart} style={{ marginLeft: '2%', width: '38%' }} type='primary'>
+                                EOS Start
+                            </Button>
+                            <Button onClick={this.tbtStart} style={{ marginLeft: '2%', width: '38%' }} type='primary'>
+                                TBT Start
+                            </Button>
                         </div>
                         <SicBoRecords />
                         <SicBoInfoDrawer
