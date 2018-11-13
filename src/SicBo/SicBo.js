@@ -35,6 +35,7 @@ class SicBo extends Component {
         this.state = {
             player_asset: {             // 记录玩家各个token的资产
                 eos: '0.0000 EOS',
+                tbt: '0.0000 TBT',
             },
             dice_result: {
                 dice1: "X",
@@ -117,20 +118,29 @@ class SicBo extends Component {
             return;
         }
 
-        this.eosjs.getTableRows({
-            json: true,
-            code: 'eosio.token',
-            scope: this.state.player_account,  // 需要获取资产的账号
-            table: 'accounts'
-        }).then(eosBalance => {
+        Promise.all([
+            this.eosjs.getTableRows({
+                json: true,
+                code: 'eosio.token',
+                scope: this.state.player_account,  // 需要获取资产的账号
+                table: 'accounts'
+            }),
+            this.eosjs.getTableRows({
+                json: true,
+                code: 'trustbetteam',
+                scope: this.state.player_account,  // 需要获取资产的账号
+                table: 'accounts'
+            })
+        ]).then(([eosBalance, tbtBalance]) => {
             if ( this.state.is_login && eosBalance.rows[0] ) {  // check if is valid now
                 let _player_asset = this.state.player_asset;
                 _player_asset.eos = eosBalance.rows[0].balance;
+                _player_asset.tbt = tbtBalance.rows[0].balance;
                 this.setState({ player_asset: _player_asset });
             }
         }).catch(e => {
             console.error(e);
-        })
+        });
     }
 
     // 从浏览器地址获取推荐人
@@ -282,6 +292,7 @@ class SicBo extends Component {
                             }
                         </a>
                         <span className='player-asset'>Asset: {this.state.player_asset.eos}</span>
+                        <span className='player-asset'>,&nbsp;&nbsp;&nbsp;&nbsp;{this.state.player_asset.tbt}</span>
                         <span className='referrer'>&nbsp;&nbsp;&nbsp;&nbsp;Referrer: {this.state.referrer}</span>
                         <a href="#" className="info" onClick={this.showInfo.bind(this)}>
                             <Icon type='smile' /> Info
