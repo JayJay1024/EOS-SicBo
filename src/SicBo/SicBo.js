@@ -97,6 +97,7 @@ class SicBo extends Component {
                 this.setState({
                     player_asset: {
                         eos: '0.0000 EOS',
+                        tbt: '0.0000 TBT',
                     }
                 });
             });
@@ -135,7 +136,9 @@ class SicBo extends Component {
             if ( this.state.is_login && eosBalance.rows[0] ) {  // check if is valid now
                 let _player_asset = this.state.player_asset;
                 _player_asset.eos = eosBalance.rows[0].balance;
-                _player_asset.tbt = tbtBalance.rows[0].balance;
+                if ( tbtBalance.rows[0] ) {
+                    _player_asset.tbt = tbtBalance.rows[0].balance;
+                }
                 this.setState({ player_asset: _player_asset });
             }
         }).catch(e => {
