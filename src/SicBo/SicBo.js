@@ -26,7 +26,7 @@ const network = {
     port: '',
     chainId: '5fff1dae8dc8e2fc4d5b23b2c7665c97f9e9d8edf2b6485a86ba311c25639191'  // kylin net
 }
-const contract_account = 'dicecontract';  // 合约账号
+const contract_account = 'trustbetgame';  // 合约账号
 
 class SicBo extends Component {
     constructor(props) {
@@ -225,7 +225,7 @@ class SicBo extends Component {
                     && actions[index].action_trace.act.data.res.uid === uuid4
                     && actions[index].action_trace.act.data.res.player === this.state.player_account ) {
                     // 进入这里，表名匹配到对应uuid的下注结果
-                    
+
                     clearInterval( this.dice_shaking );  // 停止骰子转动
 
                     const result = actions[index].action_trace.act.data.res;
