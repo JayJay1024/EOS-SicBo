@@ -454,7 +454,7 @@ class SicBo extends Component {
                         <div className="sider-box">
                             <p>玩家总挖矿：{this.state.tb_miners}</p>
                             <p>玩家EOS总下注额：{this.state.tb_players.eos_bet}</p>
-                            <p>玩家EOS总下注次数：{this.state.tb_players.times}</p>
+                            <p>玩家总下注次数：{this.state.tb_players.times}</p>
                             <p>当前挖矿速率：1EOS:{this.state.mine_rate}TBT</p>
                             <p>TBT挖矿总额：{this.state.tb_mined}</p>
                         </div>
