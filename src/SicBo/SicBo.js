@@ -63,6 +63,7 @@ class SicBo extends Component {
         this.start = this.start.bind(this);
         this.eosStart = this.eosStart.bind(this);
         this.tbtStart = this.tbtStart.bind(this);
+        this.claimTBT = this.claimTBT.bind(this);
     }
 
     init = () => {
@@ -241,6 +242,27 @@ class SicBo extends Component {
         }
     }
 
+    claimTBT = (e) => {
+        if ( this.state.is_login && 'Login' !== this.state.player_account ) {
+            const mine_contract = 'trustbetmine';
+            const eos = this.scatter.eos(network, Eos, {});
+            eos.contract(mine_contract).then(contract => {
+                contract.claimrewards({
+                    player: this.state.player_account,
+                }).then(res => {
+                    Message.success("SicBo Claim Rewards Success");
+                }).catch(e => {
+                    console.error(e);
+                    Message.error("SicBo Claim Rewards Fail");
+                });
+            }).catch(e => {
+                console.error(e);
+            });
+        } else {
+            Message.info("Login First");
+        }
+    }
+
     getSicBoResult = ( uuid4, action_seq = Math.pow(2, 52) ) => {
         this.eosjs.getActions(this.state.player_account, -1, -20).then(({ actions }) => {
             let cur_action_seq = action_seq;
@@ -333,7 +355,7 @@ class SicBo extends Component {
                             <span> 、 {this.state.dice_result.dice3}</span>
                         </div>
                         <div className="input-memo">
-                            <span style={{ fontSize: "0.5em" }}> 注: 第一个框输入memo，第二个框输入总金额，然后选择EOS或TBT下注</span>
+                            <span style={{ fontSize: "0.5em" }}> Note: 第一个框输入memo，第二个框输入总金额，然后选择EOS或TBT下注</span>
                             <Input
                                 placeholder="key:quantity"
                                 value={this.state.memo}
@@ -346,11 +368,14 @@ class SicBo extends Component {
                                 style={{ width: '18%', marginRight: '2%' }}
                                 onChange={this.inputQuantityChange.bind(this)}
                             />
-                            <Button onClick={this.eosStart} style={{ marginLeft: '2%', width: '38%' }} type='primary'>
+                            <Button onClick={this.eosStart} style={{ marginLeft: '2%', width: '28%' }} type='primary'>
                                 EOS Start
                             </Button>
-                            <Button onClick={this.tbtStart} style={{ marginLeft: '2%', width: '38%' }} type='primary'>
+                            <Button onClick={this.tbtStart} style={{ marginLeft: '2%', width: '28%' }} type='primary'>
                                 TBT Start
+                            </Button>
+                            <Button onClick={this.claimTBT} style={{ marginLeft: '2%', width: '18%' }} type='primary'>
+                                Claim TBT
                             </Button>
                         </div>
                         <SicBoRecords />
