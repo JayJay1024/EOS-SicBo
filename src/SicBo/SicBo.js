@@ -27,6 +27,12 @@ const network = {
 }
 const contract_account = 'trustbetgame';  // 合约账号
 
+const mine_total = 600000000 * 10000;
+const mined_1th  = mine_total / 1000 * 75;               // 7.5%
+const mined_2th  = mined_1th + mine_total / 1000 * 125;  // 12.5%
+const mined_3th  = mined_2th + mine_total / 100 * 30;    // 30%
+const mined_4th  = mined_3th + mine_total / 100 * 25;    // 25%
+
 class SicBo extends Component {
     constructor(props) {
         super(props);
@@ -41,6 +47,13 @@ class SicBo extends Component {
                 dice2: "X",
                 dice3: "X",
             },
+            tb_players: {
+                eos_bet: '0.0000 EOS',
+                times: 0,
+            },
+            tb_miners: '0.0000 TBT',
+            tb_mined: '0.0000 TBT',
+            mine_rate: 1,
             trx_option: null,
             is_login: false,
             player_account: 'Login',    // 保存玩家账号，未登录时显示'Login'
@@ -65,6 +78,10 @@ class SicBo extends Component {
         this.eosStart = this.eosStart.bind(this);
         this.tbtStart = this.tbtStart.bind(this);
         this.claimTBT = this.claimTBT.bind(this);
+
+        this.get_tb_miners = this.get_tb_miners.bind(this);
+        this.get_tb_mined = this.get_tb_mined.bind(this);
+        this.get_tb_players = this.get_tb_players.bind(this);
     }
 
     init = () => {
@@ -84,6 +101,9 @@ class SicBo extends Component {
                 this.setState({ is_login: true });
 
                 this.getPlayerAsset();
+                this.get_tb_mined();
+                this.get_tb_miners( account.name );
+                this.get_tb_players( account.name );
             }
         });
     }
@@ -221,6 +241,8 @@ class SicBo extends Component {
                         this.state.trx_option,
                     ).then(res => {
                         this.getPlayerAsset();  // 更新玩家余额
+                        this.get_tb_miners();
+                        this.get_tb_players();
                         Message.success('SicBo Bet Success');
                         this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
 
@@ -256,6 +278,8 @@ class SicBo extends Component {
                     this.state.trx_option,
                 ).then(res => {
                     this.getPlayerAsset();
+                    this.get_tb_miners();
+                    this.get_tb_players();
                     Message.success("SicBo Claim Rewards Success");
                 }).catch(e => {
                     console.error(e);
@@ -321,6 +345,73 @@ class SicBo extends Component {
         });
     }
 
+    get_tb_players = ( player_account = '' ) => {
+        if ( 'Login' !== this.state.player_account && player_account === '' ) {
+            player_account = this.state.player_account;
+        }
+
+        this.eosjs.getTableRows({
+            json: true,
+            code: 'trustbetgame',
+            scope: player_account,
+            table: 'players'
+        }).then(data => {
+            if ( data.rows[0] ) {
+                this.setState({ tb_players: data.rows[0] })
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+    get_tb_miners = ( player_account = '' ) => {
+        if ( 'Login' !== this.state.player_account && player_account === '' ) {
+            player_account = this.state.player_account;
+        }
+
+        this.eosjs.getTableRows({
+            json: true,
+            code: 'trustbetmine',
+            scope: player_account,
+            table: 'miners'
+        }).then(data => {
+            if ( data.rows[0] ) {
+                this.setState({ tb_miners: data.rows[0].balance });
+            }
+        }).catch(e => {
+            console.log(e);
+        });
+    }
+
+    get_tb_mined = () => {
+        this.eosjs.getTableRows({
+            json: true,
+            code: 'trustbetmine',
+            scope: 'trustbetmine',
+            table: 'mined'
+        }).then(data => {
+            if ( data.rows[0] ) {
+                this.setState({ tb_mined: data.rows[0].quantity });
+
+                const tbt_mined = data.rows[0].quantity.split(' ')[0] * 10000;
+                if ( tbt_mined < mined_1th ) {
+                    this.setState({ mine_rate: 100 });
+                } else if ( tbt_mined < mined_2th ) {
+                    this.setState({ mine_rate: 50 });
+                } else if ( tbt_mined < mined_3th ) {
+                    this.setState({ mine_rate: 20 });
+                } else if ( tbt_mined < mined_4th ) {
+                    this.setState({ mine_rate: 5 });
+                }  // else default is 1
+            }
+
+            setTimeout( this.get_tb_mined, 3000 );
+        }).catch(e => {
+            console.log(e);
+            setTimeout( this.get_tb_mined, 3000 );
+        });
+    }
+
     showInfo = () => {
         this.setState({ info_visible: true });
     }
@@ -354,6 +445,13 @@ class SicBo extends Component {
                         </a>
                     </Header>
                     <Content>
+                        <div className="sider-box">
+                            <p>玩家总挖矿：{this.state.tb_miners}</p>
+                            <p>玩家EOS总下注额：{this.state.tb_players.eos_bet}</p>
+                            <p>玩家EOS总下注次数：{this.state.tb_players.times}</p>
+                            <p>当前挖矿速率：1EOS:{this.state.mine_rate}TBT</p>
+                            <p>TBT挖矿总额：{this.state.tb_mined}</p>
+                        </div>
                         <div className='sicbo-result'>SicBo Result</div>
                         <div className='dice-result'>
                             <span>{this.state.dice_result.dice1}</span>
