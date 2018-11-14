@@ -101,11 +101,11 @@ class SicBo extends Component {
                 this.setState({ is_login: true });
 
                 this.getPlayerAsset();
-                this.get_tb_mined();
                 this.get_tb_miners( account.name );
                 this.get_tb_players( account.name );
             }
         });
+        this.get_tb_mined();
     }
 
     playerLoginLogout = () => {
@@ -127,6 +127,9 @@ class SicBo extends Component {
                         tbt: '0.0000 TBT',
                     }
                 });
+
+                this.setState({ tb_miners: '0.0000 TBT' });
+                this.setState({ tb_players: {eos_bet: '0.0000 TBT', times: 0} });
             });
         } else if ( !this.state.is_login && this.scatter && !this.scatter.identity ) {
             // 进入这里是login动作
@@ -137,6 +140,9 @@ class SicBo extends Component {
                 this.setState({ is_login: true });
 
                 this.getPlayerAsset();
+                this.get_tb_mined();
+                this.get_tb_miners( account.name );
+                this.get_tb_players( account.name );
             });
         }
     }
