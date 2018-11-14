@@ -41,6 +41,7 @@ class SicBo extends Component {
                 dice2: "X",
                 dice3: "X",
             },
+            trx_option: null,
             is_login: false,
             player_account: 'Login',    // 保存玩家账号，未登录时显示'Login'
             referrer: "Null",           // 推荐人
@@ -78,6 +79,7 @@ class SicBo extends Component {
 
             if (this.scatter && this.scatter.identity) {
                 const account = this.scatter.identity.accounts.find(account => account.blockchain === 'eos');
+                this.setState({ trx_option: {authorization: [`${account.name}@${account.authority}`]} });
                 this.setState({ player_account: account.name });
                 this.setState({ is_login: true });
 
@@ -110,6 +112,7 @@ class SicBo extends Component {
             // 进入这里是login动作
             this.scatter.getIdentity({ accounts: [network] }).then(() => {
                 const account = this.scatter.identity.accounts.find(account => account.blockchain === 'eos');
+                this.setState({ trx_option: {authorization: [`${account.name}@${account.authority}`]} });
                 this.setState({ player_account: account.name });
                 this.setState({ is_login: true });
 
@@ -210,12 +213,13 @@ class SicBo extends Component {
 
                 const eos = this.scatter.eos(network, Eos, {});
                 eos.contract(token_contract).then(contract => {
-                    contract.transfer({
-                        from: this.state.player_account,
-                        to: contract_account,
-                        quantity: Number(this.bet_quantity).toFixed(4) + ' ' + symbol,
-                        memo: value,
-                    }).then(res => {
+                    contract.transfer(
+                        this.state.player_account,
+                        contract_account,
+                        Number(this.bet_quantity).toFixed(4) + ' ' + symbol,
+                        value,
+                        this.state.trx_option,
+                    ).then(res => {
                         this.getPlayerAsset();  // 更新玩家余额
                         Message.success('SicBo Bet Success');
                         this.getSicBoResult( uuid4 );  // 根据uuid匹配结果
@@ -247,9 +251,11 @@ class SicBo extends Component {
             const mine_contract = 'trustbetmine';
             const eos = this.scatter.eos(network, Eos, {});
             eos.contract(mine_contract).then(contract => {
-                contract.claimrewards({
-                    player: this.state.player_account,
-                }).then(res => {
+                contract.claimrewards(
+                    this.state.player_account,
+                    this.state.trx_option,
+                ).then(res => {
+                    this.getPlayerAsset();
                     Message.success("SicBo Claim Rewards Success");
                 }).catch(e => {
                     console.error(e);
