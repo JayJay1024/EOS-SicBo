@@ -51,7 +51,10 @@ class SicBo extends Component {
                 eos_bet: '0.0000 EOS',
                 times: 0,
             },
-            tb_miners: '0.0000 TBT',
+            tb_miners: {
+                balance: '0.0000 TBT',
+                claimed: false,
+            },
             tb_mined: '0.0000 TBT',
             mine_rate: 1,
             trx_option: null,
@@ -128,7 +131,7 @@ class SicBo extends Component {
                     }
                 });
 
-                this.setState({ tb_miners: '0.0000 TBT' });
+                this.setState({ tb_miners: ('0.0000 TBT',false) });
                 this.setState({ tb_players: {eos_bet: '0.0000 TBT', times: 0} });
             });
         } else if ( !this.state.is_login && this.scatter && !this.scatter.identity ) {
@@ -382,7 +385,7 @@ class SicBo extends Component {
             table: 'miners'
         }).then(data => {
             if ( data.rows[0] ) {
-                this.setState({ tb_miners: data.rows[0].balance });
+                this.setState({ tb_miners: data.rows[0] });
             }
         }).catch(e => {
             console.log(e);
@@ -452,9 +455,10 @@ class SicBo extends Component {
                     </Header>
                     <Content>
                         <div className="sider-box">
-                            <p>玩家总挖矿：{this.state.tb_miners}</p>
+                            <p>玩家总挖矿：{this.state.tb_miners.balance}</p>
                             <p>玩家EOS总下注额：{this.state.tb_players.eos_bet}</p>
                             <p>玩家总下注次数：{this.state.tb_players.times}</p>
+                            <p>玩家奖励是否领取：{this.state.tb_miners.claimed ? '已领' : '未领'}</p>
                             <p>当前挖矿速率：1EOS:{this.state.mine_rate}TBT</p>
                             <p>TBT挖矿总额：{this.state.tb_mined}</p>
                         </div>
