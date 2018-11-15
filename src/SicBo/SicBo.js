@@ -132,7 +132,7 @@ class SicBo extends Component {
                     }
                 });
 
-                this.setState({ tb_miners: ('0.0000 TBT',false) });
+                this.setState({ tb_miners: {balance: '0.0000 TBT', claimed: false} });
                 this.setState({ tb_players: {eos_bet: '0.0000 TBT', times: 0} });
             });
         } else if ( !this.state.is_login && this.scatter && !this.scatter.identity ) {
