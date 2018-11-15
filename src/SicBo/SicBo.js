@@ -28,7 +28,7 @@ const network = {
 const contract_account = 'trustbetgame';  // 合约账号
 
 // const mine_total = 600000000 * 10000;
-const mine_total = 6000 * 10000;  // test
+const mine_total = 60000 * 10000;  // test
 const mined_1th  = mine_total / 1000 * 75;               // 7.5%
 const mined_2th  = mined_1th + mine_total / 1000 * 125;  // 12.5%
 const mined_3th  = mined_2th + mine_total / 100 * 30;    // 30%
