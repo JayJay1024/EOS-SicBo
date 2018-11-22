@@ -85,9 +85,6 @@ class SicBo extends Component {
         this.get_tb_miners = this.get_tb_miners.bind(this);
         this.get_tb_mined = this.get_tb_mined.bind(this);
         this.get_tb_players = this.get_tb_players.bind(this);
-
-        // test
-        this.fetchTest = this.fetchTest.bind(this);
     }
 
     init = () => {
@@ -424,39 +421,39 @@ class SicBo extends Component {
         });
     }
 
-    // test
-    fetchTest = (upper = '') => {
-        console.log("fetch miners ...");
+    // fetchTest = (upper = '') => {
+    //     console.log("fetch miners ...");
 
-        const data = {
-            code: 'trustbetmine',
-            table: 'miners',
-            lower_bound: upper,  // 从 upper 开始
-            // upper_bound: '',
-            limit: 6,  // 表示每次获取6条记录
-        };
-        const url = 'http://api-kylin.eoshenzhen.io:8890/v1/chain/get_table_by_scope';
+    //     const data = {
+    //         code: 'trustbetmine',
+    //         table: 'miners',
+    //         lower_bound: upper,  // 从 upper 开始
+    //         // upper_bound: '',
+    //         limit: 6,  // 表示每次获取6条记录
+    //     };
+    //     const url = 'http://api-kylin.eoshenzhen.io:8890/v1/chain/get_table_by_scope';
 
-        fetch(url, {
-            method: 'POST', // or 'PUT'
-            body: JSON.stringify(data), // data can be `string` or {object}!
-            headers: new Headers({
-                'Content-Type': 'application/json'
-            })
-        })
-            .then(response => {
-                return response.json();
-            })
-            .then(myJson => {
-                console.log( myJson );
-                if ( myJson.more && myJson.more.length > 0 ) {
-                    this.fetchTest( myJson.more );
-                }
-            })
-            .catch(e => {
-                console.error(e);
-            });
-    }
+    //     fetch(url, {
+    //         method: 'POST', // or 'PUT'
+    //         body: JSON.stringify(data), // data can be `string` or {object}!
+    //         headers: new Headers({
+    //             'Content-Type': 'application/json'
+    //         })
+    //     })
+    //         .then(response => {
+    //             return response.json();
+    //         })
+    //         .then(myJson => {
+    //             // miners: myJson.rows[0].scope, myJson.rows[1].scope, myJson.rows[2].scope, ...
+    //             console.log( myJson );
+    //             if ( myJson.more && myJson.more.length > 0 ) {
+    //                 this.fetchTest( myJson.more );
+    //             }
+    //         })
+    //         .catch(e => {
+    //             console.error(e);
+    //         });
+    // }
 
     showInfo = () => {
         this.setState({ info_visible: true });
@@ -468,8 +465,6 @@ class SicBo extends Component {
     componentDidMount() {
         this.init();
         this.getReferrer();
-
-        this.fetchTest();  // test
     }
 
     render() {
