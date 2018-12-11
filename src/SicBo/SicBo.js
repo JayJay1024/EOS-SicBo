@@ -56,7 +56,7 @@ class SicBo extends Component {
                 claimed: false,
             },
             tb_mined: '0.0000 TBT',
-            mine_rate: 1,
+            mine_rate: 5,
             trx_option: null,
             is_login: false,
             player_account: 'Login',    // 保存玩家账号，未登录时显示'Login'
@@ -404,14 +404,14 @@ class SicBo extends Component {
 
                 const tbt_mined = data.rows[0].quantity.split(' ')[0] * 10000;
                 if ( tbt_mined < mined_1th ) {
-                    this.setState({ mine_rate: 100 });
+                    this.setState({ mine_rate: 35 });
                 } else if ( tbt_mined < mined_2th ) {
-                    this.setState({ mine_rate: 50 });
+                    this.setState({ mine_rate: 25 });
                 } else if ( tbt_mined < mined_3th ) {
                     this.setState({ mine_rate: 20 });
                 } else if ( tbt_mined < mined_4th ) {
-                    this.setState({ mine_rate: 5 });
-                }  // else default is 1
+                    this.setState({ mine_rate: 15 });
+                }  // else default is 5
             }
 
             setTimeout( this.get_tb_mined, 3000 );
